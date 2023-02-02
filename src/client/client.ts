@@ -18,8 +18,12 @@ function vertexShader() {
 
 function fragmentShader() {
     return `
+
+    uniform float u_time;
+
     void main() {
-      gl_FragColor = vec4(1., 1., .2, 1.);
+      //gl_FragColor = vec4(abs(sin(u_time/2.)), 1., .2, 1.);
+      gl_FragColor = vec4(.5, 1., .2, 1.);
     }
     `
 }
