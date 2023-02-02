@@ -1,5 +1,16 @@
 
-From
+
+Example 2
+
+Added orbit controls.
+Changed to a ShaderMaterial.
+
+
+
+
+
+
+Boilerplate from 
 
 https://sbcode.net/threejs/
 
