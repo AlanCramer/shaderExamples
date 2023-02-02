@@ -1,13 +1,12 @@
 
 
-Example 2
+Example 3
 
-Added orbit controls.
-Changed to a ShaderMaterial.
+Make verts move with time.
 
-
-
-
+Added a clock, passed the elapsed time in as a uniform. 
+Notice the difference between scaling the projected point versus 
+scaling the model position and then projecting.
 
 
 Boilerplate from 

@@ -3,8 +3,15 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 function vertexShader() {
     return `
+
+    uniform float u_time;
+
     void main() {
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vec4 pos =  vec4(position, 1.0);
+      if (pos.y > 0.) {
+        pos.y = (sin(u_time/2.)+1.)*pos.y;
+      }
+      gl_Position =  projectionMatrix * modelViewMatrix *pos;
     }
     `
 }
@@ -38,7 +45,7 @@ const geometry = new THREE.BoxGeometry(1,1,1,10,10,10)
 //const geometry = new THREE.SphereGeometry(1, 32, 32);
 
 let uniforms = {
-    iTime: { type: 'float', value: 0.0 },
+    u_time: { type: 'float', value: 0.0 },
 }
 
 let material =  new THREE.ShaderMaterial({
@@ -46,7 +53,7 @@ let material =  new THREE.ShaderMaterial({
     uniforms: uniforms,
     fragmentShader: fragmentShader(),
     vertexShader: vertexShader(),
-  })
+ })
 
 
 const cube = new THREE.Mesh(geometry, material)
@@ -60,8 +67,13 @@ function onWindowResize() {
     render()
 }
 
+let clock = new THREE.Clock()
+
 function animate() {
     requestAnimationFrame(animate)
+
+    let t = clock.getElapsedTime();
+    uniforms.u_time.value = t;
 
     render()
 }
