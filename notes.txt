@@ -2,7 +2,8 @@
 
 Example 3
 
-Make verts move with time.
+Make verts move with time. In this case, we're moving only the upper half
+of the original model's verts.
 
 Added a clock, passed the elapsed time in as a uniform. 
 Notice the difference between scaling the projected point versus 
