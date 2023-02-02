@@ -1,5 +1,16 @@
 
-From
+Example 1
+
+Simple rotating cube in wireframe. 
+Note the Material and the wireframe option.
+Also note that the scene has no lights.
+Rotation is automatic (see the render).
+
+
+
+
+
+Boilerplate from
 
 https://sbcode.net/threejs/
 
@@ -11,3 +22,6 @@ See also
 
 https://thebookofshaders.com/
 https://www.shadertoy.com/
+
+
+
