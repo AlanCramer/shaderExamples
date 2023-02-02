@@ -1,0 +1,13 @@
+
+From
+
+https://sbcode.net/threejs/
+
+can be cloned from 
+https://sbcode.net/threejs/threejs-typescript-boilerplate/
+
+
+See also
+
+https://thebookofshaders.com/
+https://www.shadertoy.com/
