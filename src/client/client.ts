@@ -8,9 +8,6 @@ function vertexShader() {
 
     void main() {
       vec4 pos =  vec4(position, 1.0);
-      if (pos.y > 0.) {
-        pos.y = (sin(u_time/2.)+1.)*pos.y;
-      }
       gl_Position =  projectionMatrix * modelViewMatrix *pos;
     }
     `
@@ -20,69 +17,104 @@ function fragmentShader() {
     return `
 
     uniform vec2 u_resolution;
+    uniform vec2 u_mouse;
+  
+#define MAX_STEPS 100
+#define MAX_DIST 100.
+#define SURF_DIST .001
+#define TAU 6.283185
+#define PI 3.141592
+#define S smoothstep
+#define T iTime
 
-    const int MAX_MARCHING_STEPS = 255;
-    const float MIN_DIST = 0.0;
-    const float MAX_DIST = 100.0;
-    const float PRECISION = 0.001;
+mat2 Rot(float a) {
+    float s=sin(a), c=cos(a);
+    return mat2(c, -s, s, c);
+}
+
+float sdBox(vec3 p, vec3 s) {
+    p = abs(p)-s;
+	return length(max(p, 0.))+min(max(p.x, max(p.y, p.z)), 0.);
+}
+
+float sdSphere(vec3 p, float r) {
+  return length(p) - r;
+}
+
+float sdGyroid (vec3 p, float scale, float thickness) {
+  p *= scale; // scale the gyroid - drive off a uniform
+  return abs(dot(sin(p), cos(p.zxy))) / scale - thickness;
+}
+
+float GetDist(vec3 p) {
+    float box = sdBox(p, vec3(1));
+    float sphere = sdSphere(p, 1.);
+
+    float gyroid = sdGyroid(p, 5., .05);
+
+    float d = max(sphere, gyroid);
     
-    float sdSphere(vec3 p, float r )
-    {
-      vec3 offset = vec3(0, 0, -2);
-      return length(p - offset) - r;
+    return d;
+}
+
+float RayMarch(vec3 ro, vec3 rd) {
+	float dO=0.;
+    
+    for(int i=0; i<MAX_STEPS; i++) {
+    	vec3 p = ro + rd*dO;
+        float dS = GetDist(p);
+        dO += dS;
+        if(dO>MAX_DIST || abs(dS)<SURF_DIST) break;
     }
     
-    float rayMarch(vec3 ro, vec3 rd, float start, float end) {
-      float depth = start;
+    return dO;
+}
+
+vec3 GetNormal(vec3 p) {
+    vec2 e = vec2(.001, 0);
+    vec3 n = GetDist(p) - 
+        vec3(GetDist(p-e.xyy), GetDist(p-e.yxy),GetDist(p-e.yyx));
     
-      for (int i = 0; i < MAX_MARCHING_STEPS; i++) {
-        vec3 p = ro + depth * rd;
-        float d = sdSphere(p, 1.);
-        depth += d;
-        if (d < PRECISION || depth > end) break;
-      }
+    return normalize(n);
+}
+
+vec3 GetRayDir(vec2 uv, vec3 p, vec3 l, float z) {
+    vec3 
+        f = normalize(l-p),
+        r = normalize(cross(vec3(0,1,0), f)),
+        u = cross(f,r),
+        c = f*z,
+        i = c + uv.x*r + uv.y*u;
+    return normalize(i);
+}
+
+void main( )
+{
+    vec2 uv = (gl_FragCoord.xy-.5*u_resolution.xy)/u_resolution.y;
+	  vec2 m = u_mouse.xy/u_resolution.xy;
+
+    vec3 ro = vec3(0, 3, -3);
+    ro.yz *= Rot(-m.y*PI+1.);
+    ro.xz *= Rot(-m.x*TAU);
     
-      return depth;
-    }
-    
-    vec3 calcNormal(vec3 p) {
-        vec2 e = vec2(1.0, -1.0) * 0.0005; // epsilon
-        float r = 1.; // radius of sphere
-        return normalize(
-          e.xyy * sdSphere(p + e.xyy, r) +
-          e.yyx * sdSphere(p + e.yyx, r) +
-          e.yxy * sdSphere(p + e.yxy, r) +
-          e.xxx * sdSphere(p + e.xxx, r));
-    }
-    
-    void main()
-    {
-      vec2 uv = (gl_FragCoord.xy-.5*u_resolution.xy)/u_resolution.y;
-    
-      vec3 col = vec3(0);
-      vec3 ro = vec3(0, 0, 3); // ray origin that represents camera position
-      vec3 rd = normalize(vec3(uv, -1)); // ray direction
-    
-      float d = rayMarch(ro, rd, MIN_DIST, MAX_DIST); // distance to sphere
-    
-      if (d > MAX_DIST) {
-        col = vec3(0.6); // ray didn't hit anything
-      } else {
-        vec3 p = ro + rd * d; // point on sphere we discovered from ray marching
-        vec3 normal = calcNormal(p);
-        vec3 lightPosition = vec3(2, 2, 4);
-        vec3 lightDirection = normalize(lightPosition - p);
-    
-        // Calculate diffuse reflection by taking the dot product of 
-        // the normal and the light direction.
-        float dif = clamp(dot(normal, lightDirection), 0., 1.);
-    
+    vec3 rd = GetRayDir(uv, ro, vec3(0,0.,0), 1.);
+    vec3 col = vec3(0);
+   
+    float d = RayMarch(ro, rd);
+
+    if(d<MAX_DIST) {
+        vec3 p = ro + rd * d;
+        vec3 n = GetNormal(p);
+        vec3 r = reflect(rd, n);
+
+        float dif = dot(n, normalize(vec3(1,2,3)))*.5+.5;
         col = vec3(dif);
-      }
-    
-      // Output to screen
-      gl_FragColor = vec4(col, 1.0);
     }
+    
+    col = pow(col, vec3(.4545));	// gamma correction
+    
+    gl_FragColor = vec4(col,1.0);
+}
     
     `
 }
@@ -104,17 +136,19 @@ document.body.appendChild(renderer.domElement)
 
 new OrbitControls(camera, renderer.domElement)
 
-const geometry = new THREE.BoxGeometry(1,1,1,10,10,10)
+// const geometry = new THREE.BoxGeometry(10,10,10,10,10,10)
+const geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight,1,1);
 //const geometry = new THREE.SphereGeometry(1, 32, 32);
 
 let uniforms = {
     u_time: { type: 'float', value: 0.0 },
     u_resolution: { type: 'vec2', 
         value: {
-            x: window.innerWidth, 
-            y:window.innerHeight
+            x: renderer.domElement.width, 
+            y: renderer.domElement.height
         }
-    }
+    },
+    u_mouse: { type: "v2", value: new THREE.Vector2() }
 }
 
 let material =  new THREE.ShaderMaterial({
@@ -125,15 +159,27 @@ let material =  new THREE.ShaderMaterial({
  })
 
 
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
+const allPx = new THREE.Mesh(geometry, material)
+scene.add(allPx)
 
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
     camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
+
+    if (uniforms.u_resolution !== undefined){
+      uniforms.u_resolution.value.x = window.innerWidth;
+      uniforms.u_resolution.value.y = window.innerHeight;
+    }
+
     render()
+}
+
+window.addEventListener('mousemove', onMouseMove, false)
+function onMouseMove(e: { clientX: number; clientY: number }) {
+  uniforms.u_mouse.value.x = e.clientX;
+  uniforms.u_mouse.value.y = e.clientY;
 }
 
 let clock = new THREE.Clock()

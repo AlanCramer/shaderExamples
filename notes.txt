@@ -4,10 +4,19 @@ Example 4
 
 Raymarching
 
-draw a sphere in the center of the object - shade it too
+Getting started from 
+https://www.shadertoy.com/view/WtGXDD
 
-Get the description and code from here:
-https://inspirnathan.com/posts/52-shadertoy-tutorial-part-6/
+Then I switched the box to a plane that covers the scene.
+
+Shader toy mouse events seem to be only when mousedown?
+Mouse interaction is backwards in y
+
+Added the gyoid and cut to a sphere.
+
+
+See how to make a gyroid here, but watch out for magic numbers
+https://www.youtube.com/watch?v=-adHIyjIYgk
 
 
 
