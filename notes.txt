@@ -1,13 +1,16 @@
 
 
-Example 3
+Example 4
 
-Make verts move with time. In this case, we're moving only the upper half
-of the original model's verts.
+Raymarching
 
-Added a clock, passed the elapsed time in as a uniform. 
-Notice the difference between scaling the projected point versus 
-scaling the model position and then projecting.
+draw a sphere in the center of the object - shade it too
+
+Get the description and code from here:
+https://inspirnathan.com/posts/52-shadertoy-tutorial-part-6/
+
+
+
 
 
 Boilerplate from 
