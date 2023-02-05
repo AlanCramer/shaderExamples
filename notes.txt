@@ -19,6 +19,8 @@ See how to make a gyroid here, but watch out for magic numbers
 https://www.youtube.com/watch?v=-adHIyjIYgk
 
 
+Cut the boundary with a sphere and changed the walls to be non-uniform.
+
 
 
 

@@ -43,14 +43,18 @@ float sdSphere(vec3 p, float r) {
 
 float sdGyroid (vec3 p, float scale, float thickness) {
   p *= scale; // scale the gyroid - drive off a uniform
+
+  float z_mod = p.z / 16.; // normalize z
+  thickness = thickness + z_mod; // vary the thickness as a function of z
+
   return abs(dot(sin(p), cos(p.zxy))) / scale - thickness;
 }
 
 float GetDist(vec3 p) {
     float box = sdBox(p, vec3(1));
-    float sphere = sdSphere(p, 1.);
+    float sphere = sdSphere(p, 2.);
 
-    float gyroid = sdGyroid(p, 5., .05);
+    float gyroid = sdGyroid(p, 2., .4);
 
     float d = max(sphere, gyroid);
     
@@ -93,7 +97,7 @@ void main( )
     vec2 uv = (gl_FragCoord.xy-.5*u_resolution.xy)/u_resolution.y;
 	  vec2 m = u_mouse.xy/u_resolution.xy;
 
-    vec3 ro = vec3(0, 3, -3);
+    vec3 ro = vec3(0, 5, -5);
     ro.yz *= Rot(-m.y*PI+1.);
     ro.xz *= Rot(-m.x*TAU);
     
@@ -102,13 +106,16 @@ void main( )
    
     float d = RayMarch(ro, rd);
 
-    if(d<MAX_DIST) {
+    if ( d < MAX_DIST ) {
         vec3 p = ro + rd * d;
         vec3 n = GetNormal(p);
         vec3 r = reflect(rd, n);
 
+        // diffusion, TODO how does this work?
         float dif = dot(n, normalize(vec3(1,2,3)))*.5+.5;
         col = vec3(dif);
+
+        // col = vec3(.2, .2, .8);
     }
     
     col = pow(col, vec3(.4545));	// gamma correction
