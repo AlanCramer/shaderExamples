@@ -5,6 +5,10 @@ Example 2
 Added orbit controls.
 Changed to a ShaderMaterial.
 
+See Vertex Shader and Fragment Shader.
+Try changing wireframe bool.
+
+Do you know why this works without adding any lights?
 
 
 
