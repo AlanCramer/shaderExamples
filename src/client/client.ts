@@ -11,7 +11,7 @@ function vertexShader() {
       if (pos.y > 0.) {
         pos.y = (sin(u_time/2.)+1.)*pos.y;
       }
-      gl_Position =  projectionMatrix * modelViewMatrix *pos;
+      gl_Position =  projectionMatrix * modelViewMatrix * pos;
     }
     `
 }
