@@ -42,7 +42,7 @@ float sdSphere(vec3 p, float r) {
 }
 
 float sdGyroid (vec3 p, float scale, float thickness) {
-  p *= scale; // scale the gyroid - drive off a uniform
+  p *= scale; // scale the gyroid - todo: drive off a uniform
   return abs(dot(sin(p), cos(p.zxy))) / scale - thickness;
 }
 
@@ -91,14 +91,15 @@ vec3 GetRayDir(vec2 uv, vec3 p, vec3 l, float z) {
 void main( )
 {
     vec2 uv = (gl_FragCoord.xy-.5*u_resolution.xy)/u_resolution.y;
-	  vec2 m = u_mouse.xy/u_resolution.xy;
+	vec2 m = u_mouse.xy/u_resolution.xy;
 
     vec3 ro = vec3(0, 3, -3);
-    ro.yz *= Rot(-m.y*PI+1.);
+//    ro.yz *= Rot(m.y*PI-1.);
+    ro.yz *= Rot((2.0 * m.y - 1.0) * PI);
     ro.xz *= Rot(-m.x*TAU);
     
     vec3 rd = GetRayDir(uv, ro, vec3(0,0.,0), 1.);
-    vec3 col = vec3(0);
+    vec3 col = vec3(.1, 0., .1);  // background color
    
     float d = RayMarch(ro, rd);
 
@@ -134,10 +135,10 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-new OrbitControls(camera, renderer.domElement)
+//new OrbitControls(camera, renderer.domElement)
 
 // const geometry = new THREE.BoxGeometry(10,10,10,10,10,10)
-const geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight,1,1);
+const geometry = new THREE.PlaneGeometry(window.innerWidth/3 , window.innerHeight/3  ,1,1);
 //const geometry = new THREE.SphereGeometry(1, 32, 32);
 
 let uniforms = {

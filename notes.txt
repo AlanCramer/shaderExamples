@@ -2,12 +2,14 @@
 
 Example 4
 
-Raymarching
+First Gyroid - confined to a planar patch. Uncomment the Obrbit controls and zoom out a bit.
 
 Getting started from 
 https://www.shadertoy.com/view/WtGXDD
 
-Then I switched the box to a plane that covers the scene.
+
+Rotation is not right - todo: figure out how the three.js camera rotation can be applied
+
 
 Shader toy mouse events seem to be only when mousedown?
 Mouse interaction is backwards in y
