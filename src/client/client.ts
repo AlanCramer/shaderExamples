@@ -51,7 +51,7 @@ float sdGyroid (vec3 p, float scale, float thickness) {
 }
 
 float GetDist(vec3 p) {
-    float box = sdBox(p, vec3(1));
+    float box = sdBox(p, vec3(2.));
     float sphere = sdSphere(p, 2.);
 
     float gyroid = sdGyroid(p, 2., .4);
@@ -95,9 +95,9 @@ vec3 GetRayDir(vec2 uv, vec3 p, vec3 l, float z) {
 void main( )
 {
     vec2 uv = (gl_FragCoord.xy-.5*u_resolution.xy)/u_resolution.y;
-	  vec2 m = u_mouse.xy/u_resolution.xy;
+	vec2 m = u_mouse.xy/u_resolution.xy;
 
-    vec3 ro = vec3(0, 5, -5);
+    vec3 ro = vec3(0, 6., -6.);
     ro.yz *= Rot(-m.y*PI+1.);
     ro.xz *= Rot(-m.x*TAU);
     

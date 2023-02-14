@@ -1,27 +1,10 @@
 
 
-Example 4
+Example 6 - non uniform gyroid
 
-Raymarching
+look in sdGryoid() to see how wall thickness is a function of z
 
-Getting started from 
-https://www.shadertoy.com/view/WtGXDD
-
-Then I switched the box to a plane that covers the scene.
-
-Shader toy mouse events seem to be only when mousedown?
-Mouse interaction is backwards in y
-
-Added the gyoid and cut to a sphere.
-
-
-See how to make a gyroid here, but watch out for magic numbers
-https://www.youtube.com/watch?v=-adHIyjIYgk
-
-
-Cut the boundary with a sphere and changed the walls to be non-uniform.
-
-
+also, swap the sphere for the box in getDist()
 
 
 Boilerplate from 
