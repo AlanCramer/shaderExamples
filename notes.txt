@@ -2,12 +2,29 @@
 
 Example 4
 
+
+We want to replace a mesh object rendering with a lattice geometry.  Think Swiss cheese.
+We will leverage the Fragment shader to do this. 
+
+
 Raymarching
 
-draw a sphere in the center of the object - shade it too
+draw a sphere in the center of the object - shade it too 
 
 Get the description and code from here:
 https://inspirnathan.com/posts/52-shadertoy-tutorial-part-6/
+
+
+
+
+chatgpt:
+what is raymarching?
+
+Raymarching is a graphics rendering technique used for producing 3D images and animations. It works by tracing virtual rays from the camera into the 3D scene, and then marching along those rays to find the first surface that they intersect with. The position, color, and other attributes of that surface are then computed and used to render the final image.
+
+Raymarching is particularly well-suited for rendering complex 3D shapes and environments, especially those that can't be easily represented using traditional polygonal meshes. It's often used in real-time graphics applications, such as video games and virtual reality experiences, as well as in offline rendering, such as in architectural visualization or product design.
+
+Overall, raymarching is a flexible and versatile rendering technique that can be used to achieve a wide range of visual effects and styles.
 
 
 
